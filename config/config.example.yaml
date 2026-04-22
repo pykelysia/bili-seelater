@@ -1,0 +1,15 @@
+bilibili:
+  sessdata: "your_sessdata"
+  bili_jct: "your_bili_jct"
+  buvid3: "your_buvid3"
+
+email:
+  smtp_host: "smtp.163.com"
+  smtp_port: 465
+  username: "your_email@163.com"
+  password: "your_auth_code"
+  from: "your_email@163.com"
+  to: "your_gmail@gmail.com"
+
+# cron 表达式，默认每天早上9点
+schedule: "0 9 * * *"
