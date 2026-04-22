@@ -2,6 +2,7 @@ package email
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"strings"
 
@@ -18,10 +19,18 @@ type Sender struct {
 }
 
 func NewSender(cfg *config.EmailConfig) *Sender {
-	ssl := true
-	if cfg.SMTPPort == 25 {
-		ssl = false
+	ssl := false
+	useTLS := false
+
+	switch cfg.SMTPPort {
+	case 465:
+		ssl = true
+	case 587:
+		useTLS = true
+	case 25:
+		// no ssl/tls
 	}
+
 	dialer := gomail.NewDialer(
 		cfg.SMTPHost,
 		cfg.SMTPPort,
@@ -29,6 +38,9 @@ func NewSender(cfg *config.EmailConfig) *Sender {
 		cfg.Password,
 	)
 	dialer.SSL = ssl
+	if useTLS {
+		dialer.TLSConfig = &tls.Config{ServerName: cfg.SMTPHost}
+	}
 
 	return &Sender{
 		dialer: dialer,

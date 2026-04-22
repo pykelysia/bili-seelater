@@ -5,7 +5,7 @@ bilibili:
 
 email:
   smtp_host: "smtp.163.com"
-  smtp_port: 465
+  smtp_port: 25
   username: "your_email@163.com"
   password: "your_auth_code"
   from: "your_email@163.com"

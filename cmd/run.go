@@ -43,6 +43,8 @@ func runRun(cmd *cobra.Command, args []string) {
 
 	emailSender := email.NewSender(&cfg.Email)
 	if err := emailSender.SendPlainText(videos); err != nil {
+		fmt.Printf("发送邮件失败: %v\n", err)
+		fmt.Printf("SMTP配置: host=%s, port=%d, user=%s\n", cfg.Email.SMTPHost, cfg.Email.SMTPPort, cfg.Email.Username)
 		log.Fatalf("发送邮件失败: %v", err)
 	}
 
