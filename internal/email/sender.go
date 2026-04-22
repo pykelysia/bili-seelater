@@ -13,9 +13,10 @@ import (
 )
 
 type Sender struct {
-	dialer *gomail.Dialer
-	from   string
-	to     string
+	dialer  *gomail.Dialer
+	from    string
+	to      string
+	alertTo string
 }
 
 func NewSender(cfg *config.EmailConfig) *Sender {
@@ -43,9 +44,10 @@ func NewSender(cfg *config.EmailConfig) *Sender {
 	}
 
 	return &Sender{
-		dialer: dialer,
-		from:   cfg.From,
-		to:     cfg.To,
+		dialer:  dialer,
+		from:    cfg.From,
+		to:      cfg.To,
+		alertTo: cfg.AlertTo,
 	}
 }
 
@@ -96,6 +98,24 @@ func (s *Sender) SendPlainText(videos []bilibili.Video) error {
 	m.SetAddressHeader("To", s.to, "Gmail")
 	m.SetHeader("Subject", fmt.Sprintf("B站稍后再看 - 共%d个视频", len(videos)))
 	m.SetBody("text/plain", buf.String())
+
+	if err := s.dialer.DialAndSend(m); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Sender) SendAlert(subject, body string) error {
+	if s.alertTo == "" {
+		return nil
+	}
+
+	m := gomail.NewMessage()
+	m.SetAddressHeader("From", s.from, "B站稍后再看")
+	m.SetAddressHeader("To", s.alertTo, "Alert")
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/plain", body)
 
 	if err := s.dialer.DialAndSend(m); err != nil {
 		return err

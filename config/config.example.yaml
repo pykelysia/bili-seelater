@@ -10,6 +10,7 @@ email:
   password: "your_auth_code"
   from: "your_email@163.com"
   to: "your_gmail@gmail.com"
+  alert_to: "your_gmail@gmail.com"
 
 # cron 表达式，默认每天早上9点
 schedule: "0 9 * * *"

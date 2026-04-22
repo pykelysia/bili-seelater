@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -31,7 +32,7 @@ func runRun(cmd *cobra.Command, args []string) {
 
 	videos, err := biliClient.GetToViewList()
 	if err != nil {
-		log.Fatalf("获取稍后再看列表失败: %v", err)
+		handleBilibiliError(err, cfg)
 	}
 
 	if len(videos) == 0 {
@@ -49,4 +50,19 @@ func runRun(cmd *cobra.Command, args []string) {
 	}
 
 	fmt.Println("邮件发送成功")
+}
+
+func handleBilibiliError(err error, cfg *config.Config) {
+	if errors.Is(err, bilibili.ErrSessionExpired) || errors.Is(err, bilibili.ErrAuthFailed) {
+		emailSender := email.NewSender(&cfg.Email)
+		alertErr := emailSender.SendAlert(
+			"B站 Cookie 已过期",
+			"您的 B站 SESSDATA 已过期，请重新登录 B站 获取新的 Cookie。\n\n请更新配置文件 config.yaml 中的 sessdata、bili_jct、buvid3。",
+		)
+		if alertErr != nil {
+			log.Printf("发送过期提醒邮件失败: %v", alertErr)
+		}
+		log.Fatalf("B站认证失败，请更新 Cookie: %v", err)
+	}
+	log.Fatalf("获取稍后再看列表失败: %v", err)
 }

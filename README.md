@@ -7,6 +7,7 @@
 - 获取 B站"稍后再看"视频列表
 - 通过 163 邮箱 SMTP 发送邮件到 Gmail
 - 支持立即执行和定时执行两种模式
+- Cookie 过期自动发送邮件通知
 
 ## 环境要求
 
@@ -31,6 +32,7 @@ email:
   password: "your_auth_code"
   from: "your_email@163.com"
   to: "your_gmail@gmail.com"
+  alert_to: "your_gmail@gmail.com"
 
 schedule: "0 9 * * *"
 ```

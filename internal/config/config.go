@@ -23,6 +23,7 @@ type EmailConfig struct {
 	Password  string `mapstructure:"password"`
 	From      string `mapstructure:"from"`
 	To        string `mapstructure:"to"`
+	AlertTo   string `mapstructure:"alert_to"`
 }
 
 var cfg *Config
